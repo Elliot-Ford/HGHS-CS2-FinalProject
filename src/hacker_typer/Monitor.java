@@ -1,25 +1,19 @@
 package hacker_typer;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-import com.sun.xml.internal.bind.v2.runtime.Location;
-
-import swing_utils.JPanelWithBackground;
 import swing_utils.loc;
 
 public class Monitor extends JPanel implements Runnable {
@@ -28,48 +22,43 @@ public class Monitor extends JPanel implements Runnable {
 	 * 
 	 */
 	private static final long serialVersionUID = -8791554566652975440L;
-	private Image button, computer, cdFlasher, floppyFlasher, backgroundImage;
+	private Image PowerMonitor,PowerComputer, computer, cdFlasher, floppyFlasher, backgroundImage;
 	private boolean isOn;
 	private int buttonPosX, buttonPosY, scale;
-	private Dimension computerimageSize;
-	private loc cdBlinkOne, cdBlinkTwo, floppyBlink, hardBlink;
+	private loc cdBlinkOne, cdBlinkTwo, floppyBlink, hardBlink, powerButton;
 	private Random randGen;
 	private int lastTime;
-	private Image[] eightBitLetters;
-	private String letterArrangement;
+	private Font monitorFont;
+	private Cookie cookie;
 	Thread thread;
 
-	public Monitor(String computer, String letters, String button,
-			String cdFlasher, String floppyFlasher, int scale)
+	public Monitor(String computer, String letters, String powerMonitor, String powerComputer,
+			String cdFlasher, String floppyFlasher, int scale, Color bGColor)
 			throws IOException {
 
+		// Read in backgroundImage
 		backgroundImage = ImageIO.read(new File(computer));
-		backgroundImage = backgroundImage.getScaledInstance(
-				scale,
-				backgroundImage.getHeight(this) * scale
-						/ backgroundImage.getWidth(this), 0);
+
+		// set bGColor
+		this.setBackground(bGColor);
+
+		// Initialize scale
 		this.scale = scale;
-		// Create eightBitLetters array
-		eightBitLetters = splitImage(ImageIO.read(new File(letters)));
 
 		// Read in the button image
-		this.button = ImageIO.read(new File(button));
+		this.PowerMonitor = ImageIO.read(new File(powerMonitor));
+		this.PowerComputer = ImageIO.read(new File(powerComputer));
 
 		// Read in the computer image
 		this.computer = ImageIO.read(new File(computer));
-		// Save image dimensions
-		computerimageSize = new Dimension(this.computer.getWidth(this),
-				this.computer.getHeight(this));
 
 		// Read in the cd flasher image
 		this.cdFlasher = ImageIO.read(new File(cdFlasher));
-		this.cdFlasher = this.cdFlasher.getScaledInstance(16, 5, 0);
 		System.out.println("Width: " + this.cdFlasher.getWidth(this));
 		System.out.println("Height: " + this.cdFlasher.getHeight(this));
 
 		// Read in the floppy flasher image
 		this.floppyFlasher = ImageIO.read(new File(floppyFlasher));
-		this.floppyFlasher = this.floppyFlasher.getScaledInstance(5, 5, 0);
 
 		// "Computer" initial state is off
 		isOn = false;
@@ -85,10 +74,16 @@ public class Monitor extends JPanel implements Runnable {
 		lastTime = 0;
 
 		// Set location for the blinkers located in the background
-		cdBlinkOne = new loc(239, 76);
-		cdBlinkTwo = new loc(239, 142);
-		floppyBlink = new loc(82, 254);
-		hardBlink = new loc(168, 320);
+		cdBlinkOne = new loc(239, 65);
+		cdBlinkTwo = new loc(239, 131);
+		floppyBlink = new loc(82, 244);
+		hardBlink = new loc(168, 310);
+		powerButton = new loc(932, 448);
+
+		// set preferred size
+		this.setPreferredSize(getDimension());
+
+		initialize();
 
 		System.out.println();
 		System.out.println("X: " + cdBlinkOne.getX());
@@ -98,34 +93,18 @@ public class Monitor extends JPanel implements Runnable {
 		thread.start();
 	}
 
-	
-	//TODO make this work
-	private Image[] splitImage(Image input) {
-		//Image retX = new Image();
-				
-		//		new Image[(input.getHeight(this)/3)*(input.getWidth(this)/3)]();
-		BufferedImage foo = (BufferedImage) input;
-		for (int i = 0; i < input.getHeight(this) - 3; i += 3) {
-			for (int q = 0; q < input.getWidth(this) - 3; q += 3) {
-		//		retX.add(foo.getSubimage(q, i, 3, 3));
-			}
-		}
-		//Image[] bar = retX.toArray();
-		return null;
+	/*
+	 * private void generateChar() { int scaleNum =
+	 * (backgroundImage.getHeight(getParent()) / scale);
+	 * System.out.print(scaleNum); }
+	 */
 
+	private void initialize() {
+		
 	}
 
-	private void generateChar() {
-		int scaleNum = (backgroundImage.getHeight(getParent()) / scale);
-		System.out.print(scaleNum);
-	}
-
-	private void togglePower() {
-		// TODO make this work
-	}
-
-	private int getSeconds(long milli) {
-		return (int) ((int) milli * Math.pow(10, -3));
+	private int getSeconds() {
+		return (int) ((int) System.currentTimeMillis() * Math.pow(10, -3));
 	}
 
 	public Dimension getDimension() {
@@ -137,7 +116,7 @@ public class Monitor extends JPanel implements Runnable {
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		// Draw the background image.
-		g.drawImage(backgroundImage, 0, 10, this);
+		g.drawImage(getImage(), 0, 0, this);
 
 		// TODO make it so the lights toggle on and off rather than flicker
 
@@ -163,7 +142,22 @@ public class Monitor extends JPanel implements Runnable {
 			g.drawImage(floppyFlasher, hardBlink.getX(), hardBlink.getY() + 1,
 					this);
 		}
-		lastTime = getSeconds(System.currentTimeMillis());
+		lastTime = getSeconds();
+
+		// turn on power
+		if (isOn) {
+			g.drawImage(PowerMonitor, powerButton.getX(), powerButton.getY(), this);
+		}
+		
+		// turn on computer power
+			g.drawImage(PowerComputer, 240, 239, this);
+	}
+
+	private Image getImage() {
+
+		Image foo = this.createImage(WIDTH, HEIGHT);
+		// TODO Auto-generated method stub
+		return backgroundImage;
 	}
 
 	@Override
@@ -180,4 +174,32 @@ public class Monitor extends JPanel implements Runnable {
 		}
 	}
 
+	public void eventInput(MouseEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("Monitor");
+		/*
+		 * if (e.getX() > 931 && e.getX() < 968 && e.getY() > 457 && e.getY() <
+		 * 494) { System.out.println("toggle"); isOn = !isOn; }
+		 */
+
+	}
+
+	public void mouseClick(MouseEvent e) {
+		if (e.getX() > 929 && e.getX() < 976 && e.getY() > 472
+				&& e.getY() < 519) {
+			System.out.println("toggle");
+			isOn = !isOn;
+		}
+	}
+
+	public int getLinesPerSec() {
+		return 5;
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 }
