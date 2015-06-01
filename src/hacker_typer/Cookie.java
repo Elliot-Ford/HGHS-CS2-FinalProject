@@ -1,7 +1,11 @@
 package hacker_typer;
 
 public class Cookie {
-	int numberOfCookies;
+	double numberOfCookies;
+	double lastAmountOfCookies;
+	int lastSec;
+	double moreCookies;
+	double cookiesPerSec;
 
 	public Cookie() {
 		this(0);
@@ -13,7 +17,7 @@ public class Cookie {
 	}
 
 	public int getNumberOfCookies() {
-		return numberOfCookies;
+		return (int) numberOfCookies;
 	}
 
 	public void setNumberOfCookies(int numberOfCookies) {
@@ -21,9 +25,33 @@ public class Cookie {
 	}
 
 	public double getCookiesPerSec() {
-		return CookiesPerSec;
+		if (getSeconds() - lastSec != 0) {
+			double retX = (double) Math
+					.round((numberOfCookies - lastAmountOfCookies) * 1000) / 1000;
+
+			lastAmountOfCookies = numberOfCookies;
+			lastSec = getSeconds();
+			cookiesPerSec = retX;
+			return retX;
+		}
+		return cookiesPerSec;
+
 	}
 
-	double CookiesPerSec;
+	public void increaseCookies() {
+		numberOfCookies += moreCookies;
+	}
+
+	public void setMoreCookies(double numberToIncreaseBy) {
+		moreCookies += numberToIncreaseBy;
+	}
+
+	public void keyPressed() {
+		numberOfCookies += .025;
+	}
+
+	private int getSeconds() {
+		return (int) ((int) System.currentTimeMillis() * Math.pow(10, -3));
+	}
 
 }

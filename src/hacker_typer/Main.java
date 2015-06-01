@@ -2,6 +2,7 @@ package hacker_typer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.FontFormatException;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
 import java.awt.TextArea;
@@ -14,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
+import javax.security.auth.Refreshable;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -27,7 +29,7 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-public class Main extends JPanel implements MouseListener, KeyListener {
+public class Main extends JPanel implements MouseListener, Runnable {
 	/**
 	 * 
 	 */
@@ -36,13 +38,15 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 	private ImageIcon monitorIcon, settingsIcon, shopIcon;
 	private JTextArea bottomBar;
 
-	public Main() throws IOException {
-		super(new GridLayout(1, 1));
+	public Main() throws IOException, FontFormatException {
+		super(new BorderLayout());
 		initialize();
+		Thread thread = new Thread(this);
+		thread.start();
 
 	}
 
-	private void initialize() throws IOException {
+	private void initialize() throws IOException, FontFormatException {
 
 		tabbedPane = new Tabs(new Color(153, 153, 255, 255));
 		monitorIcon = createImageIcon("images/computer.png");
@@ -64,7 +68,7 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 		tabbedPane.addTab("Shop", shopIcon, panel2, "Every game needs a shop");
 		tabbedPane.addTab("Settings", settingsIcon, panel3, "Pretty Colors!");
 		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-
+		
 		// The following line enables to use scrolling tabs.
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 
@@ -72,21 +76,20 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 		bottomBar = new JTextArea("Cookies: " + getAmountOfLines()
 				+ " | LinesPerSec: " + getLinesPerSec() + "LPS");
 		bottomBar.setSize(WIDTH, 20);
+		bottomBar.setEditable(true);
 
-		this.setLayout(new BorderLayout());
 		// Add the tabbed pane to this panel
 		add(tabbedPane, BorderLayout.NORTH);
 		add(bottomBar, BorderLayout.SOUTH);
 		tabbedPane.addMouseListener(this);
 	}
 
-	private int getLinesPerSec() {
+	private double getLinesPerSec() {
 		return tabbedPane.getLinesPerSec();
 	}
 
 	private int getAmountOfLines() {
-		// TODO Auto-generated method stub
-		return 0;
+		return tabbedPane.getAmountOfLines();
 	}
 
 	protected JComponent makeTextPanel(String text) {
@@ -109,8 +112,6 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 	}
 
 	public void eventOutput(String eventDescription, MouseEvent e) {
-		System.out.println(eventDescription + " detected on "
-				+ e.getComponent().getClass().getName() + ".");
 		tabbedPane.eventInput(e);
 
 	}
@@ -144,24 +145,6 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 
 	}
 
-	@Override
-	public void keyPressed(KeyEvent e) {
-		tabbedPane.keyPressed(e);
-
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public static void main(String[] args) {
 		// Schedule a job for the event dispatch thread:
 		// creating and showing this application's GUI.
@@ -171,7 +154,7 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 				UIManager.put("swing.boldMetal", Boolean.FALSE);
 				try {
 					createAndShowGUI();
-				} catch (IOException e) {
+				} catch (IOException | FontFormatException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
@@ -179,13 +162,15 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 		});
 	}
 
+
 	/**
 	 * Create the GUI and show it. For thread safety, this method should be
 	 * invoked from the event dispatch thread.
 	 * 
 	 * @throws IOException
+	 * @throws FontFormatException 
 	 */
-	private static void createAndShowGUI() throws IOException {
+	private static void createAndShowGUI() throws IOException, FontFormatException {
 		// Create and set up the window.
 		JFrame frame = new JFrame("Hacker Typer");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -193,8 +178,29 @@ public class Main extends JPanel implements MouseListener, KeyListener {
 		frame.add(new Main(), BorderLayout.CENTER);
 
 		// Display the window.
+		frame.setFocusable(true);
 		frame.pack();
 		frame.setVisible(true);
+	}
+
+	@Override
+	public void run() {
+		while(true) {
+			refresh();
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+	}
+
+	private void refresh() {
+		bottomBar.setText("Cookies: " + getAmountOfLines()
+				+ " | LinesPerSec: " + getLinesPerSec() + "LPS");
+		
 	}
 
 }

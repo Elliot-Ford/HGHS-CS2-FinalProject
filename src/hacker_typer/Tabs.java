@@ -23,8 +23,6 @@ public class Tabs extends JTabbedPane {
 	}
 
 	public void eventInput(MouseEvent e) {
-		System.out.println(this.getSelectedIndex());
-		System.out.println(this.getComponentAt(this.getSelectedIndex()));
 		switch (this.getSelectedIndex()) {
 		case 0:
 			((Monitor) this.getComponentAt(0)).eventInput(e);
@@ -58,9 +56,13 @@ public class Tabs extends JTabbedPane {
 		}
 	}
 
-	public int getLinesPerSec() {
+	public double getLinesPerSec() {
 		return ((Monitor) this.getComponent(0)).getLinesPerSec();
 		
+	}
+	
+	public int getAmountOfLines() {
+		return ((Monitor) this.getComponent(0)).getAmountOfLines();
 	}
 
 }
