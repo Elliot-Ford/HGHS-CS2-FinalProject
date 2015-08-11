@@ -1,4 +1,4 @@
-package swing_utils;
+package utils;
 
 public class loc {
 	private int x, y;

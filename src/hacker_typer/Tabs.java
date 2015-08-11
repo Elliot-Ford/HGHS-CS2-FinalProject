@@ -6,6 +6,13 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.JTabbedPane;
 
+/**
+ * This exist because I didn't feel like working around passing listener
+ * Information to its children, no child should have to deal with that
+ * 
+ * @author ecford
+ *
+ */
 public class Tabs extends JTabbedPane {
 	private Color bGColor;
 
@@ -44,7 +51,7 @@ public class Tabs extends JTabbedPane {
 			break;
 		}
 	}
-	
+
 	public void keyPressed(KeyEvent e) {
 		switch (this.getSelectedIndex()) {
 		case 0:
@@ -58,9 +65,9 @@ public class Tabs extends JTabbedPane {
 
 	public double getLinesPerSec() {
 		return ((Monitor) this.getComponent(0)).getLinesPerSec();
-		
+
 	}
-	
+
 	public int getAmountOfLines() {
 		return ((Monitor) this.getComponent(0)).getAmountOfLines();
 	}

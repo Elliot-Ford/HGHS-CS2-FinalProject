@@ -1,4 +1,4 @@
-package hacker_typer;
+package hacker_typer_netbeans;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

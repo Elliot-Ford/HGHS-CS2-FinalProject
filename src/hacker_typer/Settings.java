@@ -7,6 +7,7 @@ import java.io.IOException;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 
+// This really doesn't do anything and can completely be ignored 
 public class Settings extends JPanel implements Runnable {
 
 	private Thread thread;

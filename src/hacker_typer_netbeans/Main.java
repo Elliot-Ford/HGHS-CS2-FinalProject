@@ -1,4 +1,4 @@
-package hacker_typer;
+package hacker_typer_netbeans;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -44,9 +44,8 @@ public class Main extends JPanel implements MouseListener, Runnable {
 	 * 
 	 */
 	private static final long serialVersionUID = 561173046829833968L;
-	private Tabs tabbedPane;
 	private ImageIcon monitorIcon, settingsIcon, shopIcon;
-	private JTextArea bottomBar;
+	private Monitor panel1;
 
 	public Main() throws IOException, FontFormatException {
 		super(new BorderLayout());
@@ -58,50 +57,18 @@ public class Main extends JPanel implements MouseListener, Runnable {
 
 	private void initialize() throws IOException, FontFormatException {
 
-		tabbedPane = new Tabs(new Color(153, 153, 255, 255));
-		monitorIcon = createImageIcon("images/computer.png");
-		settingsIcon = createImageIcon("images/settings.png");
-		shopIcon = createImageIcon("images/shop.png");
 
 		Monitor panel1 = new Monitor("images/computer.png", "font/3-bit.ttf",
 				"images/power.png", "images/powerComputer.png",
 				"images/cdFlasher.png", "images/floppyFlasher.png", 1024,
-				tabbedPane.getBGColor(), "code/Monitor"); // same text as the
+				Color.WHITE, "code/Monitor"); // same text as the
 															// Monitor class.
 															// just in txt form
 		panel1.setBounds(0, 0, 1024, 1024);
 
-		Shop panel2 = new Shop(tabbedPane.getBGColor());
-
-		Settings panel3 = new Settings(tabbedPane.getBGColor());
-
-		tabbedPane.addTab("Computer", monitorIcon, panel1,
-				"TYPE TYPE TYPE TYPE");
-		tabbedPane.addTab("Shop", shopIcon, panel2, "Every game needs a shop");
-		tabbedPane.addTab("Settings", settingsIcon, panel3, "Pretty Colors!");
-		tabbedPane.setMnemonicAt(0, KeyEvent.VK_1);
-
-		// The following line enables to use scrolling tabs.
-		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-
-		// and now for something completely different
-		bottomBar = new JTextArea("Lines: " + getAmountOfLines()
-				+ " | LinesPerSec: " + getLinesPerSec() + "LPS");
-		bottomBar.setSize(WIDTH, 20);
-		bottomBar.setEditable(true);
-
 		// Add the tabbed pane to this panel
-		add(tabbedPane, BorderLayout.NORTH);
-		add(bottomBar, BorderLayout.SOUTH);
-		tabbedPane.addMouseListener(this);
-	}
-
-	private double getLinesPerSec() {
-		return tabbedPane.getLinesPerSec();
-	}
-
-	private int getAmountOfLines() {
-		return tabbedPane.getAmountOfLines();
+		add(panel1, BorderLayout.NORTH);
+		panel1.addMouseListener(this);
 	}
 
 	protected JComponent makeTextPanel(String text) {
@@ -124,7 +91,7 @@ public class Main extends JPanel implements MouseListener, Runnable {
 	}
 
 	public void eventOutput(String eventDescription, MouseEvent e) {
-		tabbedPane.eventInput(e);
+		panel1.eventInput(e);
 
 	}
 

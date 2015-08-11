@@ -1,4 +1,4 @@
-package swing_utils;
+package utils;
 
 import java.awt.Container;
 import java.awt.Graphics;

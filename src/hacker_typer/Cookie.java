@@ -1,5 +1,6 @@
 package hacker_typer;
 
+//MMMN COOKIES!
 public class Cookie {
 	double numberOfCookies;
 	double lastAmountOfCookies;
@@ -46,10 +47,11 @@ public class Cookie {
 		moreCookies += numberToIncreaseBy;
 	}
 
-	public void keyPressed() {
-		numberOfCookies += .025;
+	public void newLine() {
+		numberOfCookies += 1;
 	}
 
+	//for those times when you need the time but don't want to be that accurate
 	private int getSeconds() {
 		return (int) ((int) System.currentTimeMillis() * Math.pow(10, -3));
 	}
